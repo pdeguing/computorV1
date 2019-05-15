@@ -9,39 +9,46 @@ import (
 
 type term struct {
 	coef	float64
-	degree	int
+	degree	int64
 }
 
-func parse(equation string) error {
+func parse(equation string) ([]term, error) {
 
-	fmt.Printf("parse: %v\n", equation);
 	words := str.Split(equation, " ")
-	fmt.Println(words)
 
-	//terms := []term{}
-	//sign := 1
+	terms := []term{}
+	var sign, inv float64 = 1, 1
 	var curr term
-	fmt.Println(curr)
-	for  _, val := range words {
-		fmt.Println(val)
 
-		if _, err := strconv.ParseFloat(val, 64); err == nil {
-			fmt.Println("val is number")
+	for  _, val := range words {
+
+		if n, err := strconv.ParseFloat(val, 64); err == nil {
+			curr.coef = n * sign * inv
+			sign = 1
 		} else if val == "*" {
-			fmt.Println("val is *")
+			// Do nothing
 		} else if val == "+" {
-			fmt.Println("val is +")
+			// Do nothing
 		} else if val == "-" {
-			fmt.Println("val is -")
+			sign = -1
 		} else if val == "=" {
-			fmt.Println("val is =")
-		// add condition to validate X^y
+			inv = -1
 		} else {
-			return fmt.Errorf("unrecognized token: %v", val)
+			tmp := str.Split(val, "^")
+			if len(tmp) != 2 || tmp[0] != "X" {
+				return  nil, fmt.Errorf("too many '^' operators in term expression")
+			}
+			e, err := strconv.ParseInt(tmp[1], 10, 64)
+			if err != nil {
+				return  nil, fmt.Errorf("incorrect exponent in term expression")
+			}
+			curr.degree = e;
+			terms = append(terms, curr)
+			curr = term{0, 0}
 		}
 	}
 
-	return nil
+	return terms, nil
 }
 
 func main() {
@@ -53,10 +60,12 @@ func main() {
 		return
 	}
 	// Parse equation into a list of terms
-	if err := parse(args[0]); err != nil {
+	terms, err := parse(args[0])
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(2)
 	}
+	fmt.Printf("parse: %v\n", terms)
 	// Reduce list of terms
 	// Find discriminant
 	// Find solutions
