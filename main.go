@@ -52,7 +52,7 @@ func parse(equation string) ([]term, error) {
 	return terms, nil
 }
 
-func reduce(terms []term) ([]term, error) {
+func reduce(terms []term) []term {
 
 	sort.Slice(terms, func(i, j int) bool {
 		return terms[i].degree > terms[j].degree
@@ -71,11 +71,21 @@ func reduce(terms []term) ([]term, error) {
 	}
 
 	fmt.Printf("Reduced form: %v\n", polynome)
+	// TODO: Print reduced form properly
 	fmt.Printf("Polynomial degree: %v\n", degree)
-	if degree > 2 {
-		return nil, fmt.Errorf("The polynomial degree is strictly greater than 2, I can't solve.")
-	}
-	return terms, nil
+	return polynome
+}
+
+func solveDegreeOne(polynome []term) {
+
+	fmt.Println("The solution is:")
+	root := -1 * polynome[0].coef / polynome[1].coef
+	fmt.Println(root)
+}
+
+func solveDegreeTwo(polynome []term) {
+	// Find discriminant
+	// Solve
 }
 
 func main() {
@@ -93,11 +103,17 @@ func main() {
 		os.Exit(2)
 	}
 	// Reduce list of terms
-	terms, err = reduce(terms)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(2)
+	polynome := reduce(terms)
+	// Solve equation
+	lenPoly := len(polynome)
+	if lenPoly == 3 {
+		solveDegreeTwo(polynome)
+	} else if lenPoly == 2 {
+		solveDegreeOne(polynome)
+	} else if lenPoly == 1 {
+		fmt.Println("The solution is:")
+		fmt.Println(polynome[0].coef)
+	} else if lenPoly > 2 {
+		fmt.Println("The polynomial degree is strictly greater than 2, I can't solve.")
 	}
-	// Find discriminant
-	// Find solutions
 }
