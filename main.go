@@ -36,7 +36,7 @@ func parse(equation string) ([]term, error) {
 		} else {
 			tmp := str.Split(val, "^")
 			if len(tmp) != 2 || tmp[0] != "X" {
-				return nil, fmt.Errorf("too many '^' operators in term expression")
+				return nil, fmt.Errorf("incorrect term expression")
 			}
 			e, err := strconv.ParseInt(tmp[1], 10, 64)
 			if err != nil {
@@ -111,13 +111,17 @@ func solveDegreeTwo(polynome []term) {
 	} else {
 		if discriminant > 0 {
 			fmt.Println("Discriminant is strictly positive, the two solutions are:")
+			s1 := ((-1 * b - math.Sqrt(discriminant)) / (2 * a))
+			s2 := ((-1 * b + math.Sqrt(discriminant)) / (2 * a))
+			fmt.Printf("%.6f\n", s1)
+			fmt.Printf("%.6f\n", s2)
 		} else {
 			fmt.Println("Discriminant is strictly negative, the two solutions are:")
+			tmp1 := ((-1 * b) / (2 * a))
+			tmp2 := (math.Sqrt(-1 * discriminant) / (2  * a))
+			fmt.Printf("%.6f - %.6f * i\n", tmp1, tmp2)
+			fmt.Printf("%.6f + %.6f * i\n", tmp1, tmp2)
 		}
-		s1 := ((-1 * b - math.Sqrt(discriminant)) / (2 * a))
-		s2 := ((-1 * b + math.Sqrt(discriminant)) / (2 * a))
-		fmt.Printf("%.6f\n", s1)
-		fmt.Printf("%.6f\n", s2)
 	}
 }
 
@@ -126,7 +130,7 @@ func ComputorV1(arg string) {
 	terms, err := parse(arg)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(2)
+		return
 	}
 	polynome := reduce(terms)
 	lenPoly := len(polynome)
