@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	str "strings"
+	"math"
 )
 
 type term struct {
@@ -52,6 +53,23 @@ func parse(equation string) ([]term, error) {
 	return terms, nil
 }
 
+func printPolynome(polynome []term) {
+	printed := false
+	for _, term := range polynome {
+		if printed {
+			fmt.Printf(" ")
+			if term.coef < 0 {
+				fmt.Printf("- ")
+			} else {
+				fmt.Printf("+ ")
+			}
+		}
+		fmt.Printf("%v * X^%v", math.Abs(term.coef), term.degree)
+		printed = true
+	}
+	fmt.Println(" = 0")
+}
+
 func reduce(terms []term) []term {
 
 	sort.Slice(terms, func(i, j int) bool {
@@ -70,8 +88,8 @@ func reduce(terms []term) []term {
 		polynome[term.degree].coef += term.coef
 	}
 
-	fmt.Printf("Reduced form: %v\n", polynome)
-	// TODO: Print reduced form properly
+	fmt.Print("Reduced form: ")
+	printPolynome(polynome)
 	fmt.Printf("Polynomial degree: %v\n", degree)
 	return polynome
 }
