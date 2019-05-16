@@ -28,9 +28,7 @@ func parse(equation string) ([]term, error) {
 			curr.coef = n * sign * inv
 			sign = 1
 		} else if val == "*" {
-			// Do nothing
 		} else if val == "+" {
-			// Do nothing
 		} else if val == "-" {
 			sign = -1
 		} else if val == "=" {
@@ -103,11 +101,9 @@ func solveDegreeOne(polynome []term) {
 
 func solveDegreeTwo(polynome []term) {
 
-	// Find discriminant
 	a, b, c := polynome[2].coef, polynome[1].coef, polynome[0].coef
 	discriminant := b * b - 4 * a * c
 
-	// Solve
 	if discriminant == 0 {
 		fmt.Println("Discriminant is equal to 0, the solution is:")
 		s := ((-1 * b) / (2 * a))
@@ -120,8 +116,32 @@ func solveDegreeTwo(polynome []term) {
 		}
 		s1 := ((-1 * b - math.Sqrt(discriminant)) / (2 * a))
 		s2 := ((-1 * b + math.Sqrt(discriminant)) / (2 * a))
-		fmt.Println(s1)
-		fmt.Println(s2)
+		fmt.Printf("%.6f\n", s1)
+		fmt.Printf("%.6f\n", s2)
+	}
+}
+
+func ComputorV1(arg string) {
+
+	terms, err := parse(arg)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(2)
+	}
+	polynome := reduce(terms)
+	lenPoly := len(polynome)
+	if lenPoly == 3 {
+		solveDegreeTwo(polynome)
+	} else if lenPoly == 2 {
+		solveDegreeOne(polynome)
+	} else if lenPoly == 1 {
+		if polynome[0].coef == 0 {
+			fmt.Println("All real numbers are solutions.")
+		} else {
+			fmt.Println("There are no solutions.")
+		}
+	} else if lenPoly > 2 {
+		fmt.Println("The polynomial degree is strictly greater than 2, I can't solve.")
 	}
 }
 
@@ -132,27 +152,7 @@ func main() {
 	if len(args) != 1 {
 		fmt.Println("Usage: ./computor equation")
 		return
-	}
-	// Parse equation into a list of terms
-	terms, err := parse(args[0])
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(2)
-	}
-	// Reduce list of terms
-	polynome := reduce(terms)
-	// Solve equation
-	lenPoly := len(polynome)
-	if lenPoly == 3 {
-		solveDegreeTwo(polynome)
-	} else if lenPoly == 2 {
-		solveDegreeOne(polynome)
-	} else if lenPoly == 1 {
-		fmt.Println("The solution is:")
-		fmt.Println(polynome[0].coef)
-	} else if lenPoly > 2 {
-		fmt.Println("The polynomial degree is strictly greater than 2, I can't solve.")
 	} else {
-		fmt.Println("All real numbers are solutions.")
+		ComputorV1(args[0])
 	}
 }
