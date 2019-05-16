@@ -102,8 +102,27 @@ func solveDegreeOne(polynome []term) {
 }
 
 func solveDegreeTwo(polynome []term) {
+
 	// Find discriminant
+	a, b, c := polynome[2].coef, polynome[1].coef, polynome[0].coef
+	discriminant := b * b - 4 * a * c
+
 	// Solve
+	if discriminant == 0 {
+		fmt.Println("Discriminant is equal to 0, the solution is:")
+		s := ((-1 * b) / (2 * a))
+		fmt.Println(s)
+	} else {
+		if discriminant > 0 {
+			fmt.Println("Discriminant is strictly positive, the two solutions are:")
+		} else {
+			fmt.Println("Discriminant is strictly negative, the two solutions are:")
+		}
+		s1 := ((-1 * b - math.Sqrt(discriminant)) / (2 * a))
+		s2 := ((-1 * b + math.Sqrt(discriminant)) / (2 * a))
+		fmt.Println(s1)
+		fmt.Println(s2)
+	}
 }
 
 func main() {
@@ -133,5 +152,7 @@ func main() {
 		fmt.Println(polynome[0].coef)
 	} else if lenPoly > 2 {
 		fmt.Println("The polynomial degree is strictly greater than 2, I can't solve.")
+	} else {
+		fmt.Println("All real numbers are solutions.")
 	}
 }
